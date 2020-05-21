@@ -23,12 +23,20 @@ public class RestLiStudentsClient {
 
     public static void main(String[] args) throws Exception {
 
+        // for http requests
         final HttpClientFactory http = new HttpClientFactory.Builder().build();
+
+        // get user option
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("------------ TEST ------------");
+        System.out.println("1) GET");
+        System.out.println("2) BATCH_GET");
+        int choice = scanner.nextInt();
+
         final Client r2Client = new TransportClientAdapter(
                 http.getClient(Collections.<String, String>emptyMap()));
 
         System.out.println("Enter a student ID: ");
-        Scanner scanner = new Scanner(System.in);
         int sid = scanner.nextInt();
 
         // create the GET request
