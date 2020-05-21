@@ -1,0 +1,19 @@
+{
+  "type" : "record",
+  "name" : "Student",
+  "namespace" : "com.example.student",
+  "doc" : "A student for Rest.li",
+  "fields" : [ {
+    "name" : "name",
+    "type" : "string",
+    "doc" : "Full name of student"
+  }, {
+    "name" : "major",
+    "type" : "string",
+    "doc" : "Student major, e.g. \"Mathematics\""
+  }, {
+    "name" : "classYear",
+    "type" : "int",
+    "doc" : "Graduation year"
+  } ]
+}

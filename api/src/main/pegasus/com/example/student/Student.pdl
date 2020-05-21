@@ -1,0 +1,15 @@
+namespace com.example.student
+
+/**
+ * A student for Rest.li
+ */
+record Student {
+    /** Full name of student */
+    name: string
+
+    /** Student major, e.g. "Mathematics" */
+    major: string
+
+    /** Graduation year */
+    classYear: int
+}

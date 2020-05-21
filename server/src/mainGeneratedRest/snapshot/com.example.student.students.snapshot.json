@@ -1,0 +1,41 @@
+{
+  "models" : [ {
+    "type" : "record",
+    "name" : "Student",
+    "namespace" : "com.example.student",
+    "doc" : "A student for Rest.li",
+    "fields" : [ {
+      "name" : "name",
+      "type" : "string",
+      "doc" : "Full name of student"
+    }, {
+      "name" : "major",
+      "type" : "string",
+      "doc" : "Student major, e.g. \"Mathematics\""
+    }, {
+      "name" : "classYear",
+      "type" : "int",
+      "doc" : "Graduation year"
+    } ]
+  } ],
+  "schema" : {
+    "name" : "students",
+    "namespace" : "com.example.student",
+    "path" : "/students",
+    "schema" : "com.example.student.Student",
+    "doc" : "generated from: com.example.student.impl.StudentsResource",
+    "collection" : {
+      "identifier" : {
+        "name" : "studentsId",
+        "type" : "int"
+      },
+      "supports" : [ "get" ],
+      "methods" : [ {
+        "method" : "get"
+      } ],
+      "entity" : {
+        "path" : "/students/{studentsId}"
+      }
+    }
+  }
+}

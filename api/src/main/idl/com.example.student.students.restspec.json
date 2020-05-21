@@ -1,0 +1,20 @@
+{
+  "name" : "students",
+  "namespace" : "com.example.student",
+  "path" : "/students",
+  "schema" : "com.example.student.Student",
+  "doc" : "generated from: com.example.student.impl.StudentsResource",
+  "collection" : {
+    "identifier" : {
+      "name" : "studentsId",
+      "type" : "int"
+    },
+    "supports" : [ "get" ],
+    "methods" : [ {
+      "method" : "get"
+    } ],
+    "entity" : {
+      "path" : "/students/{studentsId}"
+    }
+  }
+}
