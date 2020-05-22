@@ -1,12 +1,17 @@
 package com.example.student.impl;
 
+import com.linkedin.restli.common.HttpStatus;
+import com.linkedin.restli.server.BatchResult;
 import com.linkedin.restli.server.CreateResponse;
+import com.linkedin.restli.server.RestLiServiceException;
 import com.linkedin.restli.server.annotations.RestLiCollection;
 import com.linkedin.restli.server.resources.CollectionResourceTemplate;
 import com.example.student.Student;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -86,14 +91,32 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
      * @return a map of student ids to students who exist
      */
     @Override
-    public Map<Integer, Student> batchGet(Set<Integer> ids) {
-        return ids.stream()
-                    .collect(Collectors
-                    .toMap(id -> (Integer) id,
-                            id -> (Student) students.get(id)));
+    public BatchResult<Integer, Student> batchGet(Set<Integer> ids) {
+
+        Map<Integer, Student> batch = new HashMap<Integer, Student>();
+        Map<Integer, RestLiServiceException> errors = new HashMap<Integer, RestLiServiceException>();
+
+        // put a student in batch if they exist, create an error otherwise
+        ids.stream()
+            .forEach(id -> {
+                Student student = students.get(id);
+                System.out.println(id);
+                if (student != null) {
+                    batch.put(id, student);
+                }
+                else {
+                    errors.put(id, new RestLiServiceException(HttpStatus.S_404_NOT_FOUND));
+                }
+            });
+
+        BatchResult<Integer, Student> result = new BatchResult<Integer, Student>(batch, errors);
+
+        return new BatchResult<Integer, Student>(batch, errors);
+
     }
 
     /**
+     * TODO
      * Adds a student to the database.
      *
      * @param entity the Student we're adding

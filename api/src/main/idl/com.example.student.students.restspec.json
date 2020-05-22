@@ -12,7 +12,7 @@
     "supports" : [ "batch_get", "create", "get" ],
     "methods" : [ {
       "method" : "create",
-      "doc" : "Adds a student to the database."
+      "doc" : "TODO\n Adds a student to the database."
     }, {
       "method" : "get",
       "doc" : "Gets a student from in-memory store."
