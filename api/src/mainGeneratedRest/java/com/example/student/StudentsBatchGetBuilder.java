@@ -10,6 +10,9 @@ import com.linkedin.restli.common.ResourceSpec;
 /**
  * Gets a set of students that correspond to the specified ids.
  * 
+ *  Request:
+ *       http GET localhost:8080/students/<id>
+ * 
  * @deprecated
  *     This format of request builder is obsolete. Please use {@link com.example.student.StudentsBatchGetRequestBuilder} instead.
  */

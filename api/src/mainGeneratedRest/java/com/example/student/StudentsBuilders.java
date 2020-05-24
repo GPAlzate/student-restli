@@ -27,6 +27,8 @@ import com.linkedin.restli.internal.common.URIParamUtils;
  * 
  *       https://linkedin.github.io/rest.li/modeling/modeling#collection
  * 
+ *  - Learn how to use RestLiConfig. Where do we specify this?
+ * 
  * generated from: com.example.student.impl.StudentsResource
  * 
  * @deprecated
@@ -45,7 +47,7 @@ public class StudentsBuilders {
         HashMap<String, DynamicRecordMetadata> requestMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, DynamicRecordMetadata> responseMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo> keyParts = new HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo>();
-        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
+        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
     }
 
     public StudentsBuilders() {
@@ -95,8 +97,7 @@ public class StudentsBuilders {
     }
 
     /**
-     * TODO
-     *  Adds a student to the database.
+     * Adds a student to the database.
      * 
      * @return
      *     builder for the resource method
@@ -106,7 +107,10 @@ public class StudentsBuilders {
     }
 
     /**
-     * Gets a student from in-memory store.
+     * Gets a student from in-memory store. 
+     * 
+     *  Request:
+     *       http GET localhost:8080/students/<id>
      * 
      * @return
      *     builder for the resource method
@@ -118,11 +122,24 @@ public class StudentsBuilders {
     /**
      * Gets a set of students that correspond to the specified ids.
      * 
+     *  Request:
+     *       http GET localhost:8080/students/<id>
+     * 
      * @return
      *     builder for the resource method
      */
     public StudentsBatchGetBuilder batchGet() {
         return new StudentsBatchGetBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Retrieves all students from the map
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsGetAllBuilder getAll() {
+        return new StudentsGetAllBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
     }
 
 }

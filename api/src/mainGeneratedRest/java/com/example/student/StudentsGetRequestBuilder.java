@@ -8,7 +8,10 @@ import com.linkedin.restli.common.ResourceSpec;
 
 
 /**
- * Gets a student from in-memory store.
+ * Gets a student from in-memory store. 
+ * 
+ *  Request:
+ *       http GET localhost:8080/students/<id>
  * 
  */
 @Generated(value = "com.linkedin.pegasus.generator.JavaCodeUtil", comments = "Rest.li Request Builder")

@@ -9,6 +9,7 @@ import com.linkedin.restli.server.PagingContext;
 import com.linkedin.restli.server.ResourceContext;
 import com.linkedin.restli.server.RestLiConfig;
 import com.linkedin.restli.server.RestLiServiceException;
+import com.linkedin.restli.server.annotations.PagingContextParam;
 import com.linkedin.restli.server.annotations.RestLiCollection;
 import com.linkedin.restli.server.resources.CollectionResourceTemplate;
 import com.example.student.Student;
@@ -38,6 +39,8 @@ import java.util.stream.Stream;
  *      https://linkedin.github.io/rest.li/modeling/modeling#collection
  *
  * - Learn how to use RestLiConfig. Where do we specify this?
+ *
+ * - Put the id as a field in the PDL?
  */
 @RestLiCollection(name = "students", namespace = "com.example.student", keyName="studentID")
 public class StudentsResource extends CollectionResourceTemplate<Integer, Student> {
@@ -66,23 +69,13 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
         students.put(6, new Student().setName("Galileo")
                                             .setMajor("Physics")
                                             .setClassYear(2021));
-        students.put(7, new Student().setName("Rick Riordan")
-                                            .setMajor("English")
-                                            .setClassYear(2021));
-        students.put(8, new Student().setName("Andrew Yang")
-                                            .setMajor("Asian American Studies")
-                                            .setClassYear(2021));
-        students.put(9, new Student().setName("Quentin Tarantino")
-                                            .setMajor("Media Studies")
-                                            .setClassYear(2021));
-        students.put(10, new Student().setName("John Maynard Keynes")
-                                            .setMajor("Economics")
-                                            .setClassYear(2021));
-
     }
 
     /**
      * Gets a student from in-memory store. 
+     *
+     * Request:
+     *      http GET localhost:8080/students/<id>
      *
      * @param sid the unique student id
      *
@@ -94,13 +87,24 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
         return students.get(sid);
     }
 
+    /**
+     * Retrieves all students from the map.
+     *
+     * Request:
+     *      http GET localhost:8080/students
+     *
+     * @return a list of all the students
+     */
     @Override
-    public List<Student> getAll(PagingContext pagingContext) {
-        return super.getAll(pagingContext);
+    public List<Student> getAll(@PagingContextParam PagingContext pagingContext) {
+        return students.values().stream().collect(Collectors.toList());
     }
 
     /**
      * Gets a set of students that correspond to the specified ids.
+     *
+     * Request:
+     *      http GET localhost:8080/students?<ids=1&ids=2&...>
      *
      * @param ids the ids of the students to get
      * @return a map of student ids to students who exist
@@ -132,6 +136,9 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
 
     /**
      * Adds a student to the database.
+     *
+     * Request:
+     *      TODO
      *
      * @param entity the Student we're adding
      * @return response object with HTTP status code (default is 200)

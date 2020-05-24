@@ -27,6 +27,8 @@ import com.linkedin.restli.common.ResourceSpecImpl;
  * 
  *       https://linkedin.github.io/rest.li/modeling/modeling#collection
  * 
+ *  - Learn how to use RestLiConfig. Where do we specify this?
+ * 
  * generated from: com.example.student.impl.StudentsResource
  * 
  */
@@ -42,7 +44,7 @@ public class StudentsRequestBuilders
         HashMap<String, DynamicRecordMetadata> requestMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, DynamicRecordMetadata> responseMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo> keyParts = new HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo>();
-        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
+        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
     }
 
     public StudentsRequestBuilders() {
@@ -70,7 +72,10 @@ public class StudentsRequestBuilders
     }
 
     /**
-     * Gets a student from in-memory store.
+     * Gets a student from in-memory store. 
+     * 
+     *  Request:
+     *       http GET localhost:8080/students/<id>
      * 
      * @return
      *     builder for the resource method
@@ -82,6 +87,9 @@ public class StudentsRequestBuilders
     /**
      * Gets a set of students that correspond to the specified ids.
      * 
+     *  Request:
+     *       http GET localhost:8080/students/<id>
+     * 
      * @return
      *     builder for the resource method
      */
@@ -90,8 +98,17 @@ public class StudentsRequestBuilders
     }
 
     /**
-     * TODO
-     *  Adds a student to the database.
+     * Retrieves all students from the map
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsGetAllRequestBuilder getAll() {
+        return new StudentsGetAllRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Adds a student to the database.
      * 
      * @return
      *     builder for the resource method

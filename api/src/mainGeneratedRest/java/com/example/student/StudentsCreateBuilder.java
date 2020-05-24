@@ -14,8 +14,7 @@ import com.linkedin.restli.common.validation.RestLiDataValidator;
 
 
 /**
- * TODO
- *  Adds a student to the database.
+ * Adds a student to the database.
  * 
  * @deprecated
  *     This format of request builder is obsolete. Please use {@link com.example.student.StudentsCreateRequestBuilder} instead.

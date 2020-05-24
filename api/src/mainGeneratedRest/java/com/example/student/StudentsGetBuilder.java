@@ -8,7 +8,10 @@ import com.linkedin.restli.common.ResourceSpec;
 
 
 /**
- * Gets a student from in-memory store.
+ * Gets a student from in-memory store. 
+ * 
+ *  Request:
+ *       http GET localhost:8080/students/<id>
  * 
  * @deprecated
  *     This format of request builder is obsolete. Please use {@link com.example.student.StudentsGetRequestBuilder} instead.

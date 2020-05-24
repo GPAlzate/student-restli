@@ -3,33 +3,29 @@ package com.example.student;
 import com.linkedin.common.callback.FutureCallback;
 import com.linkedin.common.util.None;
 import com.linkedin.r2.transport.common.Client;
-import com.linkedin.r2.transport.common.bridge.client.TransportClient;
 import com.linkedin.r2.transport.common.bridge.client.TransportClientAdapter;
 import com.linkedin.r2.transport.http.client.HttpClientFactory;
 import com.linkedin.restli.client.BatchGetEntityRequest;
-import com.linkedin.restli.client.BatchGetRequest;
-import com.linkedin.restli.client.BatchRequest;
 import com.linkedin.restli.client.CreateIdRequest;
-import com.linkedin.restli.client.CreateRequest;
+import com.linkedin.restli.client.GetAllRequest;
+import com.linkedin.restli.client.GetAllRequestBuilder;
+import com.linkedin.restli.client.GetRequest;
 import com.linkedin.restli.client.Request;
 import com.linkedin.restli.client.Response;
 import com.linkedin.restli.client.ResponseFuture;
 import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.client.RestLiResponseException;
 import com.linkedin.restli.client.response.BatchKVResponse;
-import com.linkedin.restli.common.BatchResponse;
+import com.linkedin.restli.common.CollectionResponse;
 import com.linkedin.restli.common.EntityResponse;
 import com.linkedin.restli.common.ErrorResponse;
 import com.linkedin.restli.common.HttpStatus;
 import com.linkedin.restli.common.IdResponse;
 
-import io.netty.handler.codec.http.HttpRequest;
-
 import com.example.student.StudentsRequestBuilders;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -66,7 +62,7 @@ public class RestLiStudentsClient {
 
         // create the GET request
         StudentsGetRequestBuilder getBuilder = requestBuilder.get();
-        Request<Student> getRequest = getBuilder.id(sid).build();
+        GetRequest<Student> getRequest = getBuilder.id(sid).build();
 
         // get the response of request back
         final ResponseFuture<Student> getFuture = restClient.sendRequest(getRequest);
@@ -110,7 +106,7 @@ public class RestLiStudentsClient {
                     new ErrorResponse().setCode("NOT_FOUND").setStatus(404));
 
         // TODO: how to use the errors found in BatchResult from the server?
-        // use getErrors()?
+        // they are all in getEntity().getErrors() but what to do...
         students.entrySet().stream()
                 .forEach(entry -> {
                     Integer id = entry.getKey();
@@ -125,6 +121,19 @@ public class RestLiStudentsClient {
                     }
                     System.out.println("-----------------------");
                 });
+
+    }
+
+    private static void getAllStudents() throws Exception {
+       StudentsGetAllRequestBuilder getAllBuilder = requestBuilder.getAll(); 
+       GetAllRequest<Student> getAllRequest = getAllBuilder.build();
+       Response<CollectionResponse<Student>> response = restClient.sendRequest(getAllRequest).getResponse();
+
+       // TODO: difference between stream.forEach and Collections.forEach
+       response.getEntity()
+                .getElements()
+                .stream()
+                .forEach(System.out::println);
 
     }
 
@@ -192,7 +201,8 @@ public class RestLiStudentsClient {
             System.out.println("0) Quit");
             System.out.println("1) GET");
             System.out.println("2) BATCH_GET");
-            System.out.println("3) CREATE");
+            System.out.println("3) GET_ALL");
+            System.out.println("4) CREATE");
             System.out.print("Enter choice: ");
             choice = Integer.parseInt(scanner.nextLine());
             
@@ -219,7 +229,10 @@ public class RestLiStudentsClient {
                          System.out.println("No records exist for the specified set of ids!");
                      }
                      break;
-                 case 3: // CREATE
+                 case 3: // GET_ALL
+                     getAllStudents();
+                     break;
+                 case 4: // CREATE
                      try {
                          createStudent();
                          System.out.println("Student successfully added to database!");
