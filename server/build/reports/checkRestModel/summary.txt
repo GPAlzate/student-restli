@@ -1,11 +1,3 @@
-
-idl compatibility report:
-Compatible changes:
-  1) New resource is created in "/Users/GabeAlzate/Desktop/internprep/example-restli/server/src/mainGeneratedRest/snapshot/com.example.student.students.snapshot.json"
-  2) New resource is created in "/Users/GabeAlzate/Desktop/internprep/example-restli/server/src/mainGeneratedRest/idl/com.example.student.students.restspec.json"
-
 [RS-COMPAT]: true
 [MD-COMPAT]: true
-[RS-C]:New resource is created in "/Users/GabeAlzate/Desktop/internprep/example-restli/server/src/mainGeneratedRest/snapshot/com.example.student.students.snapshot.json"
-[RS-C]:New resource is created in "/Users/GabeAlzate/Desktop/internprep/example-restli/server/src/mainGeneratedRest/idl/com.example.student.students.restspec.json"
 

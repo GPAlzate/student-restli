@@ -8,6 +8,7 @@ import com.linkedin.restli.common.ResourceSpec;
 
 
 /**
+ * Gets a student from in-memory store.
  * 
  * @deprecated
  *     This format of request builder is obsolete. Please use {@link com.example.student.StudentsGetRequestBuilder} instead.
