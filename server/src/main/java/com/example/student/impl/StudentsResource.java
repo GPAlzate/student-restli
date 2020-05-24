@@ -2,12 +2,20 @@ package com.example.student.impl;
 
 import com.linkedin.restli.common.HttpStatus;
 import com.linkedin.restli.server.BatchResult;
+import com.linkedin.restli.server.CreateKVResponse;
 import com.linkedin.restli.server.CreateResponse;
+import com.linkedin.restli.server.ErrorResponseFormat;
+import com.linkedin.restli.server.PagingContext;
+import com.linkedin.restli.server.ResourceContext;
+import com.linkedin.restli.server.RestLiConfig;
 import com.linkedin.restli.server.RestLiServiceException;
 import com.linkedin.restli.server.annotations.RestLiCollection;
 import com.linkedin.restli.server.resources.CollectionResourceTemplate;
 import com.example.student.Student;
+
+import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -28,6 +36,8 @@ import java.util.stream.Stream;
  * - Read about resource conventions
  *
  *      https://linkedin.github.io/rest.li/modeling/modeling#collection
+ *
+ * - Learn how to use RestLiConfig. Where do we specify this?
  */
 @RestLiCollection(name = "students", namespace = "com.example.student", keyName="studentID")
 public class StudentsResource extends CollectionResourceTemplate<Integer, Student> {
@@ -35,8 +45,7 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
     /**
      * Populate with sample students
      */
-    private static Map<Integer, Student> students
-            = new HashMap<Integer, Student>();
+    private static Map<Integer, Student> students = new HashMap<Integer, Student>();
 
     static {
         students.put(1, new Student().setName("Gabe Alzate")
@@ -69,6 +78,7 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
         students.put(10, new Student().setName("John Maynard Keynes")
                                             .setMajor("Economics")
                                             .setClassYear(2021));
+
     }
 
     /**
@@ -82,6 +92,11 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
     @Override
     public Student get(Integer sid) {
         return students.get(sid);
+    }
+
+    @Override
+    public List<Student> getAll(PagingContext pagingContext) {
+        return super.getAll(pagingContext);
     }
 
     /**
@@ -100,31 +115,57 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
         ids.stream()
             .forEach(id -> {
                 Student student = students.get(id);
-                System.out.println(id);
                 if (student != null) {
                     batch.put(id, student);
                 }
                 else {
-                    errors.put(id, new RestLiServiceException(HttpStatus.S_404_NOT_FOUND));
+                    errors.put(id,
+                            new RestLiServiceException(
+                                HttpStatus.S_404_NOT_FOUND,
+                                "No matches found for this sid."));
                 }
             });
-
-        BatchResult<Integer, Student> result = new BatchResult<Integer, Student>(batch, errors);
 
         return new BatchResult<Integer, Student>(batch, errors);
 
     }
 
     /**
-     * TODO
      * Adds a student to the database.
      *
      * @param entity the Student we're adding
-     * @return response object  HTTP status code
+     * @return response object with HTTP status code (default is 200)
      */
     @Override
     public CreateResponse create(Student entity) {
-        return super.create(entity);
+
+        // added a parameter so we can put this new student in the database.
+        // TODO: should we just add id to the Student.pdl?
+        int sid = Integer.valueOf(getContext().getParameter("sid"));
+
+        // illegal name
+        if (!entity.hasName() || entity.getName().isEmpty())
+            return new CreateResponse(
+                    new RestLiServiceException(HttpStatus.S_400_BAD_REQUEST,
+                            "The student has no name."));
+
+        // empty major (no major has value "undeclared")
+        if (!entity.hasMajor())
+            return new CreateResponse(
+                    new RestLiServiceException(HttpStatus.S_400_BAD_REQUEST,
+                            "Major field cannot be empty.")
+                    );
+
+        // illegal class year
+        if (!entity.hasClassYear() || entity.getClassYear() < 1887)
+            return new CreateResponse(
+                    new RestLiServiceException(HttpStatus.S_400_BAD_REQUEST,
+                            "Class year must be later than 1887.")
+                    );
+
+        students.put(sid, entity);
+        return new CreateResponse(sid);
+
     }
 
 }
