@@ -202,4 +202,16 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
 
     }
 
+    /**
+     * Deletes a student from the database.
+     *
+     * @param key the id matching the student we wish to delete
+     *
+     * @return an update response with an HTTP status code
+     */
+    @Override
+    public UpdateResponse delete(Integer key) {
+        return super.delete(key);
+    }
+
 }

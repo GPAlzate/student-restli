@@ -9,7 +9,7 @@
       "name" : "studentID",
       "type" : "int"
     },
-    "supports" : [ "batch_get", "create", "get", "get_all", "update" ],
+    "supports" : [ "batch_get", "create", "delete", "get", "get_all", "update" ],
     "methods" : [ {
       "method" : "create",
       "doc" : "Adds a student to the database.\n\n Request:\n      TODO"
@@ -19,6 +19,9 @@
     }, {
       "method" : "update",
       "doc" : "Updates a student by replacing the entire entity."
+    }, {
+      "method" : "delete",
+      "doc" : "Deletes a student from the database."
     }, {
       "method" : "batch_get",
       "doc" : "Gets a set of students that correspond to the specified ids.\n\n Request:\n      http GET localhost:8080/students?<ids=1&ids=2&...>"

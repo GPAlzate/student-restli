@@ -46,7 +46,7 @@ public class StudentsRequestBuilders
         HashMap<String, DynamicRecordMetadata> requestMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, DynamicRecordMetadata> responseMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo> keyParts = new HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo>();
-        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.UPDATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
+        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.UPDATE, ResourceMethod.DELETE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
     }
 
     public StudentsRequestBuilders() {
@@ -87,29 +87,6 @@ public class StudentsRequestBuilders
     }
 
     /**
-     * Retrieves all students from the map.
-     * 
-     *  Request:
-     *       http GET localhost:8080/students
-     * 
-     * @return
-     *     builder for the resource method
-     */
-    public StudentsGetAllRequestBuilder getAll() {
-        return new StudentsGetAllRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
-    }
-
-    /**
-     * Updates a student by replacing the entire entity.
-     * 
-     * @return
-     *     builder for the resource method
-     */
-    public StudentsUpdateRequestBuilder update() {
-        return new StudentsUpdateRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
-    }
-
-    /**
      * Gets a set of students that correspond to the specified ids.
      * 
      *  Request:
@@ -123,6 +100,26 @@ public class StudentsRequestBuilders
     }
 
     /**
+     * Updates a student by replacing the entire entity.
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsUpdateRequestBuilder update() {
+        return new StudentsUpdateRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Deletes a student from the database.
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsDeleteRequestBuilder delete() {
+        return new StudentsDeleteRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
      * Adds a student to the database.
      * 
      *  Request:
@@ -133,6 +130,19 @@ public class StudentsRequestBuilders
      */
     public StudentsCreateRequestBuilder create() {
         return new StudentsCreateRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Retrieves all students from the map.
+     * 
+     *  Request:
+     *       http GET localhost:8080/students
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsGetAllRequestBuilder getAll() {
+        return new StudentsGetAllRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
     }
 
 }

@@ -8,6 +8,8 @@ import com.linkedin.r2.transport.http.client.HttpClientFactory;
 import com.linkedin.restli.client.BatchGetEntityRequest;
 import com.linkedin.restli.client.CreateIdRequest;
 import com.linkedin.restli.client.CreateRequest;
+import com.linkedin.restli.client.DeleteRequest;
+import com.linkedin.restli.client.DeleteRequestBuilder;
 import com.linkedin.restli.client.GetAllRequest;
 import com.linkedin.restli.client.GetAllRequestBuilder;
 import com.linkedin.restli.client.GetRequest;
@@ -27,6 +29,8 @@ import com.linkedin.restli.common.ErrorResponse;
 import com.linkedin.restli.common.HttpStatus;
 import com.linkedin.restli.common.IdResponse;
 
+import org.apache.zookeeper.OpResult.DeleteResult;
+
 import com.example.student.StudentsRequestBuilders;
 
 import java.util.Arrays;
@@ -45,7 +49,6 @@ public class RestLiStudentsClient {
 
     /* for http requests */
     private final static HttpClientFactory http = new HttpClientFactory.Builder().build();
-
 
     /* create restli transport client */
     private final static Client r2Client = new TransportClientAdapter(
@@ -197,7 +200,9 @@ public class RestLiStudentsClient {
     }
 
     /**
-     * Allows client to update an existing student
+     * Allows client to update an existing student.
+     * TODO: this isn't supposed to have an option, put the choice in
+     * PARTIAL_UPDATE
      *
      * @param sid
      */
@@ -262,6 +267,13 @@ public class RestLiStudentsClient {
                     && str.chars().noneMatch(Character::isDigit));
     }
 
+    private static void deleteStudent(int sid) throws Exception {
+
+        DeleteRequest<Student> deleteRequest = requestBuilder.delete().id(sid).build();
+        Response<EmptyRecord> response = restClient.sendRequest(deleteRequest).getResponse();
+
+    }
+
     public static void main(String[] args) throws Exception {
 
         int choice;
@@ -270,11 +282,9 @@ public class RestLiStudentsClient {
             // need to use parseInt nextLine otherwise the next nextLine won't work
             System.out.println("------------ TEST ------------");
             System.out.println("0) Quit");
-            System.out.println("1) GET");
-            System.out.println("2) BATCH_GET");
-            System.out.println("3) GET_ALL");
-            System.out.println("4) CREATE");
-            System.out.println("5) UPDATE");
+            System.out.println("1) GET              4) CREATE");
+            System.out.println("2) BATCH_GET        5) UPDATE");
+            System.out.println("3) GET_ALL          6) DELETE");
             System.out.print("Enter choice: ");
             choice = Integer.parseInt(scanner.nextLine());
             
