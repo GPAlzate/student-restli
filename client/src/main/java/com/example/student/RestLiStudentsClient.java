@@ -7,20 +7,14 @@ import com.linkedin.r2.transport.common.bridge.client.TransportClientAdapter;
 import com.linkedin.r2.transport.http.client.HttpClientFactory;
 import com.linkedin.restli.client.BatchGetEntityRequest;
 import com.linkedin.restli.client.CreateIdRequest;
-import com.linkedin.restli.client.CreateRequest;
 import com.linkedin.restli.client.DeleteRequest;
-import com.linkedin.restli.client.DeleteRequestBuilder;
 import com.linkedin.restli.client.GetAllRequest;
-import com.linkedin.restli.client.GetAllRequestBuilder;
 import com.linkedin.restli.client.GetRequest;
-import com.linkedin.restli.client.Request;
-import com.linkedin.restli.client.RequestBuilder;
 import com.linkedin.restli.client.Response;
 import com.linkedin.restli.client.ResponseFuture;
 import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.client.RestLiResponseException;
 import com.linkedin.restli.client.UpdateRequest;
-import com.linkedin.restli.client.UpdateRequestBuilder;
 import com.linkedin.restli.client.response.BatchKVResponse;
 import com.linkedin.restli.common.CollectionResponse;
 import com.linkedin.restli.common.EmptyRecord;
@@ -29,7 +23,7 @@ import com.linkedin.restli.common.ErrorResponse;
 import com.linkedin.restli.common.HttpStatus;
 import com.linkedin.restli.common.IdResponse;
 
-import org.apache.zookeeper.OpResult.DeleteResult;
+import org.apache.commons.lang.StringUtils;
 
 import com.example.student.StudentsRequestBuilders;
 
@@ -40,8 +34,10 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+/**
+ * Client app for the student RestLi service.
+ */
 public class RestLiStudentsClient {
 
     /* Read user input for API choice */
@@ -110,6 +106,7 @@ public class RestLiStudentsClient {
         Map<Integer, EntityResponse<Student>> students
                 = response.getEntity().getResults();
 
+        // throw new exception if there are no students in the database
         if (students.isEmpty())
             throw new RestLiResponseException(
                     new ErrorResponse().setCode("NOT_FOUND").setStatus(404));
@@ -182,8 +179,9 @@ public class RestLiStudentsClient {
             Response<IdResponse<Integer>> response
                     = restClient.sendRequest(createRequest).getResponse();
 
-            if (response.hasError())
-                throw response.getError();
+            // // TODO: is this necessary
+            // if (response.hasError())
+            //     throw response.getError();
 
             return response.getEntity();
 
@@ -248,9 +246,6 @@ public class RestLiStudentsClient {
         // it). Why not for update as well?
         Response<EmptyRecord> response = restClient.sendRequest(updateRequest).getResponse();
 
-        if (response.hasError())
-            throw response.getError();
-
     }
 
     /**
@@ -269,6 +264,15 @@ public class RestLiStudentsClient {
 
     private static void deleteStudent(int sid) throws Exception {
 
+        System.out.print("Checking if student exists ... ");
+
+        // GET throws exception if not found => can't delete
+        Student student = getStudent(sid);
+
+        System.out.println("student found!\nDeleting "
+                + student.getName() + " from the database ...");
+
+        // finally delete student (will throw error if deletion fails)
         DeleteRequest<Student> deleteRequest = requestBuilder.delete().id(sid).build();
         Response<EmptyRecord> response = restClient.sendRequest(deleteRequest).getResponse();
 
@@ -286,9 +290,21 @@ public class RestLiStudentsClient {
             System.out.println("2) BATCH_GET        5) UPDATE");
             System.out.println("3) GET_ALL          6) DELETE");
             System.out.print("Enter choice: ");
-            choice = Integer.parseInt(scanner.nextLine());
+
+            String rawInput = scanner.nextLine();
             
+            // NaN case
+            if (!StringUtils.isNumeric(rawInput)) {
+                System.out.println("Input NaN; please try again.");
+                choice = -1;
+                continue;
+            }
+
+            choice = Integer.parseInt(rawInput);
             switch (choice) {
+                case 0: // QUIT
+                    System.out.println("Goodbye!");
+                    break;
                 case 1: // GET request
                     try {
                         System.out.println("Enter a student ID: ");
@@ -332,8 +348,17 @@ public class RestLiStudentsClient {
                          System.out.println(e.getMessage());
                      }
                      break;
-                 default: // 0 = Quit
-                     System.out.println("Goodbye!");
+                 case 6: // DELETE
+                     try {
+                         System.out.println("Enter the student ID of whom you wish to delete: ");
+                         deleteStudent(Integer.valueOf(scanner.nextLine()));
+                         System.out.println("Student successfully deleted!");
+                     } catch (RestLiResponseException e) {
+                         System.out.println(e.getServiceErrorMessage());
+                     }
+                     break;
+                 default: // input number that is not a choice
+                     System.out.println("Invalid choice. Please try again.");
                      break;
              } 
         } while (choice != 0);

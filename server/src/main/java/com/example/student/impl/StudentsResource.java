@@ -211,7 +211,12 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
      */
     @Override
     public UpdateResponse delete(Integer key) {
-        return super.delete(key);
+
+        // will be null if key doesnt exist
+        return new UpdateResponse(
+                (students.remove(key) == null)
+                    ? HttpStatus.S_404_NOT_FOUND
+                    : HttpStatus.S_200_OK);
     }
 
 }
