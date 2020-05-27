@@ -8,7 +8,10 @@ import com.linkedin.restli.common.ResourceSpec;
 
 
 /**
- * Retrieves all students from the map
+ * Retrieves all students from the map.
+ * 
+ *  Request:
+ *       http GET localhost:8080/students
  * 
  * @deprecated
  *     This format of request builder is obsolete. Please use {@link com.example.student.StudentsGetAllRequestBuilder} instead.

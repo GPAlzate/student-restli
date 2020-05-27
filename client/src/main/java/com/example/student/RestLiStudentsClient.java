@@ -7,16 +7,21 @@ import com.linkedin.r2.transport.common.bridge.client.TransportClientAdapter;
 import com.linkedin.r2.transport.http.client.HttpClientFactory;
 import com.linkedin.restli.client.BatchGetEntityRequest;
 import com.linkedin.restli.client.CreateIdRequest;
+import com.linkedin.restli.client.CreateRequest;
 import com.linkedin.restli.client.GetAllRequest;
 import com.linkedin.restli.client.GetAllRequestBuilder;
 import com.linkedin.restli.client.GetRequest;
 import com.linkedin.restli.client.Request;
+import com.linkedin.restli.client.RequestBuilder;
 import com.linkedin.restli.client.Response;
 import com.linkedin.restli.client.ResponseFuture;
 import com.linkedin.restli.client.RestClient;
 import com.linkedin.restli.client.RestLiResponseException;
+import com.linkedin.restli.client.UpdateRequest;
+import com.linkedin.restli.client.UpdateRequestBuilder;
 import com.linkedin.restli.client.response.BatchKVResponse;
 import com.linkedin.restli.common.CollectionResponse;
+import com.linkedin.restli.common.EmptyRecord;
 import com.linkedin.restli.common.EntityResponse;
 import com.linkedin.restli.common.ErrorResponse;
 import com.linkedin.restli.common.HttpStatus;
@@ -31,6 +36,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class RestLiStudentsClient {
 
@@ -138,20 +144,17 @@ public class RestLiStudentsClient {
     }
 
     
-    private static IdResponse<Integer> createStudent() throws Exception {
+    private static IdResponse<Integer> createStudent(int sid) throws Exception {
 
-        System.out.println("Enter the student's id number:");
-        int sid = Integer.valueOf(scanner.nextLine());
         System.out.print("Checking id availability ... ");
 
         // throw exception if student is found (not found means we can create
         // this student)
         try {
             Student student = getStudent(sid);
-        } catch (RestLiResponseException e) { 
+        } catch (RestLiResponseException e) { // this is where we create
 
-            // TODO I should make the exceptions client side, but i'll do it
-            // later when I haaaave to
+            // TODO I should put exceptions client side, but i'll do it later
             System.out.print("ID available! Enter the student's name:");
             String name = scanner.nextLine();
 
@@ -183,12 +186,80 @@ public class RestLiStudentsClient {
 
         }
 
+        // did I use conflict right?
+        // TODO: how to write response codes correctly
         throw new RestLiResponseException(
                 new ErrorResponse().setStatus(
                         HttpStatus.S_409_CONFLICT.getCode()
                     ).setCode("SID_CONFLICT").setMessage("ID already taken!")
                 );
 
+    }
+
+    /**
+     * Allows client to update an existing student
+     *
+     * @param sid
+     */
+    private static void updateStudent(int sid) throws Exception {
+        System.out.print("Checking if student exists ... ");
+
+        // GET throws exception if not found => can't update
+        Student student = getStudent(sid);
+
+        System.out.println("student found!\nPlease enter a new name (enter to skip):");
+        String name = scanner.nextLine();
+
+        // naive validity check: there exists a letter and there are no digits
+        if (!naiveIsName(name)) {
+            throw new RestLiResponseException(
+                    new ErrorResponse().setStatus(
+                        HttpStatus.S_400_BAD_REQUEST.getCode()
+                        ).setMessage("Name has invalid value.")
+                    );
+        }
+        // if not a blank string, then update name
+        else if (!name.isEmpty())
+            student.setName(name);
+
+        System.out.println("Please enter a new major (enter to skip):");
+        String major = scanner.nextLine();
+
+        if (!naiveIsName(major)) {
+            throw new RestLiResponseException(
+                    new ErrorResponse().setStatus(
+                        HttpStatus.S_400_BAD_REQUEST.getCode()
+                        ).setMessage("Major has invalid value.")
+                    );
+        } else if (!major.isEmpty())
+            student.setMajor(major);
+
+        // TODO: what does validateInput do?
+        UpdateRequest<Student> updateRequest 
+                = requestBuilder.update().id(sid).input(student).build();
+
+        // TODO: it says, for example, createRequest uses EmptyRecord for empty
+        // body but this has been deprecated (createIdRequest no longer uses
+        // it). Why not for update as well?
+        Response<EmptyRecord> response = restClient.sendRequest(updateRequest).getResponse();
+
+        if (response.hasError())
+            throw response.getError();
+
+    }
+
+    /**
+     * Checks (naively) if a string can possibly be a name.
+     * Def: string is not a valid name if it has no letters or any digits. Empty
+     * string is also valid by vacuous truth.
+     *
+     * @param str the string whose validity to check
+     * @return true if a valid name, false otherwise
+     */
+    private static boolean naiveIsName(String str) {
+        return str.isEmpty()
+                || (str.chars().anyMatch(Character::isLetter) 
+                    && str.chars().noneMatch(Character::isDigit));
     }
 
     public static void main(String[] args) throws Exception {
@@ -203,6 +274,7 @@ public class RestLiStudentsClient {
             System.out.println("2) BATCH_GET");
             System.out.println("3) GET_ALL");
             System.out.println("4) CREATE");
+            System.out.println("5) UPDATE");
             System.out.print("Enter choice: ");
             choice = Integer.parseInt(scanner.nextLine());
             
@@ -234,8 +306,18 @@ public class RestLiStudentsClient {
                      break;
                  case 4: // CREATE
                      try {
-                         createStudent();
+                         System.out.println("Enter the student's id number:");
+                         createStudent(Integer.valueOf(scanner.nextLine()));
                          System.out.println("Student successfully added to database!");
+                     } catch (RestLiResponseException e) {
+                         System.out.println(e.getMessage());
+                     }
+                     break;
+                 case 5: // UPDATE
+                     try {
+                         System.out.println("Enter the student ID of whom you wish to update: ");
+                         updateStudent(Integer.valueOf(scanner.nextLine()));
+                         System.out.println("Student successfully updated!");
                      } catch (RestLiResponseException e) {
                          System.out.println(e.getMessage());
                      }

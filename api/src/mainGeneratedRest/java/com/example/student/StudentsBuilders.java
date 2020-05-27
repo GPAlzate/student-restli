@@ -29,6 +29,8 @@ import com.linkedin.restli.internal.common.URIParamUtils;
  * 
  *  - Learn how to use RestLiConfig. Where do we specify this?
  * 
+ *  - Put the id as a field in the PDL?
+ * 
  * generated from: com.example.student.impl.StudentsResource
  * 
  * @deprecated
@@ -47,7 +49,7 @@ public class StudentsBuilders {
         HashMap<String, DynamicRecordMetadata> requestMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, DynamicRecordMetadata> responseMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo> keyParts = new HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo>();
-        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
+        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.UPDATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
     }
 
     public StudentsBuilders() {
@@ -99,11 +101,27 @@ public class StudentsBuilders {
     /**
      * Adds a student to the database.
      * 
+     *  Request:
+     *       TODO
+     * 
      * @return
      *     builder for the resource method
      */
     public StudentsCreateBuilder create() {
         return new StudentsCreateBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Retrieves all students from the map.
+     * 
+     *  Request:
+     *       http GET localhost:8080/students
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsGetAllBuilder getAll() {
+        return new StudentsGetAllBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
     }
 
     /**
@@ -120,26 +138,26 @@ public class StudentsBuilders {
     }
 
     /**
+     * Updates a student by replacing the entire entity.
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsUpdateBuilder update() {
+        return new StudentsUpdateBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
      * Gets a set of students that correspond to the specified ids.
      * 
      *  Request:
-     *       http GET localhost:8080/students/<id>
+     *       http GET localhost:8080/students?<ids=1&ids=2&...>
      * 
      * @return
      *     builder for the resource method
      */
     public StudentsBatchGetBuilder batchGet() {
         return new StudentsBatchGetBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
-    }
-
-    /**
-     * Retrieves all students from the map
-     * 
-     * @return
-     *     builder for the resource method
-     */
-    public StudentsGetAllBuilder getAll() {
-        return new StudentsGetAllBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
     }
 
 }

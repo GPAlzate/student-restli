@@ -29,6 +29,8 @@ import com.linkedin.restli.common.ResourceSpecImpl;
  * 
  *  - Learn how to use RestLiConfig. Where do we specify this?
  * 
+ *  - Put the id as a field in the PDL?
+ * 
  * generated from: com.example.student.impl.StudentsResource
  * 
  */
@@ -44,7 +46,7 @@ public class StudentsRequestBuilders
         HashMap<String, DynamicRecordMetadata> requestMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, DynamicRecordMetadata> responseMetadataMap = new HashMap<String, DynamicRecordMetadata>();
         HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo> keyParts = new HashMap<String, com.linkedin.restli.common.CompoundKey.TypeInfo>();
-        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
+        _resourceSpec = new ResourceSpecImpl(EnumSet.of(ResourceMethod.GET, ResourceMethod.BATCH_GET, ResourceMethod.CREATE, ResourceMethod.UPDATE, ResourceMethod.GET_ALL), requestMetadataMap, responseMetadataMap, Integer.class, null, null, Student.class, keyParts);
     }
 
     public StudentsRequestBuilders() {
@@ -85,20 +87,10 @@ public class StudentsRequestBuilders
     }
 
     /**
-     * Gets a set of students that correspond to the specified ids.
+     * Retrieves all students from the map.
      * 
      *  Request:
-     *       http GET localhost:8080/students/<id>
-     * 
-     * @return
-     *     builder for the resource method
-     */
-    public StudentsBatchGetRequestBuilder batchGet() {
-        return new StudentsBatchGetRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
-    }
-
-    /**
-     * Retrieves all students from the map
+     *       http GET localhost:8080/students
      * 
      * @return
      *     builder for the resource method
@@ -108,7 +100,33 @@ public class StudentsRequestBuilders
     }
 
     /**
+     * Updates a student by replacing the entire entity.
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsUpdateRequestBuilder update() {
+        return new StudentsUpdateRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
+     * Gets a set of students that correspond to the specified ids.
+     * 
+     *  Request:
+     *       http GET localhost:8080/students?<ids=1&ids=2&...>
+     * 
+     * @return
+     *     builder for the resource method
+     */
+    public StudentsBatchGetRequestBuilder batchGet() {
+        return new StudentsBatchGetRequestBuilder(getBaseUriTemplate(), _resourceSpec, getRequestOptions());
+    }
+
+    /**
      * Adds a student to the database.
+     * 
+     *  Request:
+     *       TODO
      * 
      * @return
      *     builder for the resource method

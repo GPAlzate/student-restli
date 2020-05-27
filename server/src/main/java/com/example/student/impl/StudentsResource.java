@@ -2,27 +2,20 @@ package com.example.student.impl;
 
 import com.linkedin.restli.common.HttpStatus;
 import com.linkedin.restli.server.BatchResult;
-import com.linkedin.restli.server.CreateKVResponse;
 import com.linkedin.restli.server.CreateResponse;
-import com.linkedin.restli.server.ErrorResponseFormat;
 import com.linkedin.restli.server.PagingContext;
-import com.linkedin.restli.server.ResourceContext;
-import com.linkedin.restli.server.RestLiConfig;
 import com.linkedin.restli.server.RestLiServiceException;
+import com.linkedin.restli.server.UpdateResponse;
 import com.linkedin.restli.server.annotations.PagingContextParam;
 import com.linkedin.restli.server.annotations.RestLiCollection;
 import com.linkedin.restli.server.resources.CollectionResourceTemplate;
 import com.example.student.Student;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Sample Rest.li resource for a student. Identifies student by their ID and
@@ -146,9 +139,15 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
     @Override
     public CreateResponse create(Student entity) {
 
-        // added a parameter so we can put this new student in the database.
-        // TODO: should we just add id to the Student.pdl?
+        // added a parameter in the client side so we can put this new student
+        // in the database. TODO: should we just add id to the Student.pdl?
         int sid = Integer.valueOf(getContext().getParameter("sid"));
+
+        // should never go here since we check this in the client side
+        if (students.containsKey(sid))
+            return new CreateResponse(
+                    new RestLiServiceException(HttpStatus.S_409_CONFLICT,
+                            "This id is already in use!"));
 
         // illegal name
         if (!entity.hasName() || entity.getName().isEmpty())
@@ -172,6 +171,34 @@ public class StudentsResource extends CollectionResourceTemplate<Integer, Studen
 
         students.put(sid, entity);
         return new CreateResponse(sid);
+
+    }
+
+    /**
+     * Updates a student by replacing the entire entity.
+     *
+     * @param key    the id of the student we're updating
+     * @param entity the entity to which we are changing the existing student
+     *
+     * @return an update response with an HTTP status code
+     */
+    @Override
+    public UpdateResponse update(Integer key, Student entity) {
+
+        // should never get here since we check this in the client side
+        if (!students.containsKey(key))
+            return new UpdateResponse(HttpStatus.S_404_NOT_FOUND);
+
+        // illegal name, 
+        // empty major (no major has value "undeclared"),
+        // illegal class year
+        if (!entity.hasName() || entity.getName().isEmpty() 
+                || !entity.hasMajor()
+                || !entity.hasClassYear() || entity.getClassYear() < 1887)
+            return new UpdateResponse(HttpStatus.S_400_BAD_REQUEST);
+
+        students.put(key, entity);
+        return new UpdateResponse(HttpStatus.S_200_OK);
 
     }
 

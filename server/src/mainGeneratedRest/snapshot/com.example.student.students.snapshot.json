@@ -23,25 +23,28 @@
     "namespace" : "com.example.student",
     "path" : "/students",
     "schema" : "com.example.student.Student",
-    "doc" : "Sample Rest.li resource for a student. Identifies student by their ID and\n retrieves the corresponding student info\n\n TODO:\n - Explore differences between resource annotations, e.g. RestLiCollection,\n   RestLiSimpleResource, etc.\n\n      https://linkedin.github.io/rest.li/user_guide/restli_server#runtimes\n\n - Read about resource conventions\n\n      https://linkedin.github.io/rest.li/modeling/modeling#collection\n\n - Learn how to use RestLiConfig. Where do we specify this?\n\ngenerated from: com.example.student.impl.StudentsResource",
+    "doc" : "Sample Rest.li resource for a student. Identifies student by their ID and\n retrieves the corresponding student info\n\n TODO:\n - Explore differences between resource annotations, e.g. RestLiCollection,\n   RestLiSimpleResource, etc.\n\n      https://linkedin.github.io/rest.li/user_guide/restli_server#runtimes\n\n - Read about resource conventions\n\n      https://linkedin.github.io/rest.li/modeling/modeling#collection\n\n - Learn how to use RestLiConfig. Where do we specify this?\n\n - Put the id as a field in the PDL?\n\ngenerated from: com.example.student.impl.StudentsResource",
     "collection" : {
       "identifier" : {
         "name" : "studentID",
         "type" : "int"
       },
-      "supports" : [ "batch_get", "create", "get", "get_all" ],
+      "supports" : [ "batch_get", "create", "get", "get_all", "update" ],
       "methods" : [ {
         "method" : "create",
-        "doc" : "Adds a student to the database."
+        "doc" : "Adds a student to the database.\n\n Request:\n      TODO"
       }, {
         "method" : "get",
         "doc" : "Gets a student from in-memory store. \n\n Request:\n      http GET localhost:8080/students/<id>"
       }, {
+        "method" : "update",
+        "doc" : "Updates a student by replacing the entire entity."
+      }, {
         "method" : "batch_get",
-        "doc" : "Gets a set of students that correspond to the specified ids.\n\n Request:\n      http GET localhost:8080/students/<id>"
+        "doc" : "Gets a set of students that correspond to the specified ids.\n\n Request:\n      http GET localhost:8080/students?<ids=1&ids=2&...>"
       }, {
         "method" : "get_all",
-        "doc" : "Retrieves all students from the map",
+        "doc" : "Retrieves all students from the map.\n\n Request:\n      http GET localhost:8080/students",
         "pagingSupported" : true
       } ],
       "entity" : {

@@ -8,7 +8,10 @@ import com.linkedin.restli.common.ResourceSpec;
 
 
 /**
- * Retrieves all students from the map
+ * Retrieves all students from the map.
+ * 
+ *  Request:
+ *       http GET localhost:8080/students
  * 
  */
 @Generated(value = "com.linkedin.pegasus.generator.JavaCodeUtil", comments = "Rest.li Request Builder")

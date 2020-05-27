@@ -11,7 +11,7 @@ import com.linkedin.restli.common.ResourceSpec;
  * Gets a set of students that correspond to the specified ids.
  * 
  *  Request:
- *       http GET localhost:8080/students/<id>
+ *       http GET localhost:8080/students?<ids=1&ids=2&...>
  * 
  */
 @Generated(value = "com.linkedin.pegasus.generator.JavaCodeUtil", comments = "Rest.li Request Builder")
